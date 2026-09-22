@@ -1,0 +1,44 @@
+---
+import '../../styles/global.css';
+import { sanityClient } from '../../lib/sanity';
+import BlogContent from '../../components/BlogContent.jsx';
+
+// 1. Generate static routes for all available blogs
+export async function getStaticPaths() {
+  const posts = await sanityClient.fetch(
+    `*[_type == "post"]{ "slug": slug.current }`
+  );
+
+  return posts.map((post: any) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+// 2. Fetch the data for the specific URL being visited
+const { slug } = Astro.params;
+const post = await sanityClient.fetch(
+  `*[_type == "post" && slug.current == $slug][0]`,
+  { slug }
+);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{post.title} | Eva Bharat</title>
+	</head>
+	<body>
+    <main class="blog-detail-container">
+      <a href="/" class="back-link">← Back to all posts</a>
+      
+      <h1>{post.title}</h1>
+      
+      <!-- Render the rich text (Portable Text) using our React Component -->
+      <!-- client:load ensures the React component hydrates correctly in Astro -->
+      <BlogContent body={post.body} client:load />
+    </main>
+	</body>
+</html>

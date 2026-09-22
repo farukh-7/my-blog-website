@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import { sanityClient } from '../lib/sanity';
+
+// Fetch all posts from Sanity (No filter for target websites since this is a general test, but you can add it!)
+const posts = await sanityClient.fetch(
+  `*[_type == "post"] | order(_createdAt desc) {
+    title,
+    "slug": slug.current,
+    "body": pt::text(body)
+  }`
+);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Eva Bharat | Blog Ecosystem</title>
+	</head>
+	<body>
+    <header>
+      <div class="container">
+        <h1>Omnichannel Blog</h1>
+        <p>This content is dynamically fetched straight from your Sanity Studio. Powered by Astro, React, and beautiful CSS.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="blog-grid">
+        {posts.length === 0 ? (
+          <div class="blog-card" style="grid-column: 1 / -1; text-align: center;">
+            <h2>No blogs found yet!</h2>
+            <p>Go to your Sanity Studio, write a post, and refresh this page.</p>
+          </div>
+        ) : (
+          posts.map((post: any) => (
+            <a href={`/blog/${post.slug}`} class="blog-card">
+              <h2>{post.title}</h2>
+              <p>
+                {post.body 
+                  ? post.body.substring(0, 100) + '...'
+                  : 'Click to read more about this topic.'}
+              </p>
+            </a>
+          ))
+        )}
+      </div>
+    </main>
+	</body>
+</html>
