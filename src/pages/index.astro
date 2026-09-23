@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { sanityClient } from '../lib/sanity';
+import SEO from '../components/SEO.astro';
 
 // Fetch all posts from Sanity (No filter for target websites since this is a general test, but you can add it!)
 const posts = await sanityClient.fetch(
@@ -18,7 +19,11 @@ const posts = await sanityClient.fetch(
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Eva Bharat | Blog Ecosystem</title>
+		<SEO 
+      title="Eva Bharat | Blog Ecosystem" 
+      description="Welcome to the Eva Bharat Omnichannel Blog. Read dynamically fetched content from our Sanity Studio."
+      type="website"
+    />
 	</head>
 	<body>
     <header>

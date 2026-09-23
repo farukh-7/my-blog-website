@@ -1,9 +1,9 @@
 import { PortableText } from '@portabletext/react';
-import imageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 import { sanityClient } from '../lib/sanity'; // Import your sanity connection
 
 // 1. Setup the image URL builder
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 function urlFor(source) {
   return builder.image(source);
 }

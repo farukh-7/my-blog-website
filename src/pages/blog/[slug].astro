@@ -2,6 +2,8 @@
 import '../../styles/global.css';
 import { sanityClient } from '../../lib/sanity';
 import BlogContent from '../../components/BlogContent.jsx';
+import SEO from '../../components/SEO.astro';
+import { urlFor } from '../../lib/urlFor';
 
 // 1. Generate static routes for all available blogs
 export async function getStaticPaths() {
@@ -17,9 +19,17 @@ export async function getStaticPaths() {
 // 2. Fetch the data for the specific URL being visited
 const { slug } = Astro.params;
 const post = await sanityClient.fetch(
-  `*[_type == "post" && slug.current == $slug][0]`,
+  `*[_type == "post" && slug.current == $slug][0]{
+    title,
+    mainImage,
+    "excerpt": pt::text(body),
+    body
+  }`,
   { slug }
 );
+
+const description = post.excerpt ? post.excerpt.substring(0, 160) + '...' : `Read about ${post.title} on Eva Bharat`;
+const imageUrl = post.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : undefined;
 ---
 
 <html lang="en">
@@ -28,7 +38,12 @@ const post = await sanityClient.fetch(
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{post.title} | Eva Bharat</title>
+		<SEO 
+      title={`${post.title} | Eva Bharat`} 
+      description={description}
+      image={imageUrl}
+      type="article"
+    />
 	</head>
 	<body>
     <main class="blog-detail-container">
