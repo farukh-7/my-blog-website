@@ -38,7 +38,7 @@ const post = await sanityClient.fetch(
       
       <!-- Render the rich text (Portable Text) using our React Component -->
       <!-- client:load ensures the React component hydrates correctly in Astro -->
-      <BlogContent body={post.body} client:load />
+      <BlogContent body={post.body} />
     </main>
 	</body>
 </html>
